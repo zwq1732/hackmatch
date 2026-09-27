@@ -1,0 +1,1190 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HackMatch · 组队 & 交作品</title>
+<style>
+  :root{
+    --ink:#1a1a1a;
+    --paper:#fdfaf1;
+    --bg:#f2ead2;
+    --red:#ff4d5e;
+    --yellow:#ffd23f;
+    --mint:#06d6a0;
+    --blue:#4dabf7;
+    --purple:#9775fa;
+    --orange:#ff922b;
+    --pink:#ffb3c6;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;
+    background-color:var(--bg);
+    background-image:
+      radial-gradient(rgba(26,26,26,.10) 1px, transparent 1.4px),
+      radial-gradient(rgba(26,26,26,.04) 1px, transparent 1.4px);
+    background-size:24px 24px, 24px 24px;
+    background-position:0 0, 12px 12px;
+    color:var(--ink);
+    line-height:1.6;
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* ================= 顶部导航 ================= */
+  .nav{
+    display:flex;align-items:center;gap:20px;
+    padding:16px 24px 14px;
+    background:var(--paper);
+    border-bottom:3px solid var(--ink);
+    position:sticky;top:0;z-index:30;
+    flex-wrap:wrap;
+  }
+  .nav::before{
+    content:'';position:absolute;top:0;left:0;right:0;height:5px;
+    background:linear-gradient(90deg,
+      var(--red) 0 20%, var(--yellow) 20% 40%, var(--mint) 40% 60%,
+      var(--blue) 60% 80%, var(--purple) 80% 100%);
+  }
+  .brand{
+    font-weight:900;font-size:19px;color:var(--ink);
+    text-decoration:none;
+    background:var(--yellow);
+    padding:4px 14px;
+    border:2.5px solid var(--ink);
+    box-shadow:3px 3px 0 var(--ink);
+    transform:rotate(-2deg);
+    letter-spacing:-0.4px;
+    transition:transform .15s;
+  }
+  .brand:hover{transform:rotate(0deg);text-decoration:none}
+
+  .nav nav{display:flex;gap:4px;flex-wrap:wrap;font-size:14px}
+  .nav nav a{
+    color:var(--ink);text-decoration:none;font-weight:700;
+    padding:6px 14px;border-radius:2px;
+    border:2px solid transparent;
+    transition:all .14s;
+  }
+  .nav nav a:hover{
+    background:var(--ink);color:var(--paper);text-decoration:none;
+    transform:translateY(-1px);
+    box-shadow:3px 3px 0 rgba(26,26,26,.25);
+  }
+  .me{
+    margin-left:auto;display:flex;align-items:center;gap:8px;
+    font-size:13px;color:#5c5238;font-weight:700;
+    background:#fffbe8;padding:4px 10px;border:2px solid var(--ink);
+    box-shadow:2px 2px 0 var(--ink);
+  }
+
+  /* ================= 主容器 ================= */
+  main{max-width:1080px;margin:32px auto 100px;padding:0 20px}
+
+  /* ================= 标题 ================= */
+  h1{
+    display:inline-block;margin:0;
+    font-size:30px;font-weight:900;letter-spacing:-1px;
+    padding:5px 18px;
+    background:var(--yellow);
+    border:2.5px solid var(--ink);
+    box-shadow:5px 5px 0 var(--ink);
+    transform:rotate(-1deg);
+  }
+  h3{margin:0 0 8px;font-size:17px;font-weight:800;letter-spacing:-0.2px}
+
+  .pagehead{
+    display:flex;align-items:center;justify-content:space-between;
+    gap:16px;flex-wrap:wrap;margin-bottom:24px;
+  }
+  .pagehead .sub{
+    font-size:13px;color:#6b5e42;font-weight:700;
+    background:#fffbe8;padding:4px 12px;
+    border:2px solid var(--ink);box-shadow:2px 2px 0 var(--ink);
+  }
+
+  /* ================= 卡片 ================= */
+  .card{
+    position:relative;
+    background:var(--paper);
+    border:2.5px solid var(--ink);
+    border-left:9px solid var(--accent, var(--ink));
+    border-radius:3px;
+    padding:20px 22px;
+    margin-bottom:22px;
+    box-shadow:5px 5px 0 var(--ink), 9px 9px 0 rgba(26,26,26,.09);
+    transform:rotate(var(--rot, 0deg));
+    transition:transform .2s ease, box-shadow .2s ease;
+  }
+  .card:hover{
+    transform:rotate(0deg) translate(-2px,-2px);
+    box-shadow:8px 8px 0 var(--ink), 13px 13px 0 rgba(26,26,26,.09);
+  }
+  /* 卡片顶部的“胶带”装饰 */
+  .card::after{
+    content:'';
+    position:absolute;
+    top:-9px;left:26px;
+    width:64px;height:20px;
+    background:rgba(255,210,63,.72);
+    border-left:2px dashed rgba(26,26,26,.18);
+    border-right:2px dashed rgba(26,26,26,.18);
+    transform:rotate(-3deg);
+    pointer-events:none;
+  }
+  .card:nth-of-type(even)::after{
+    left:auto;right:32px;
+    transform:rotate(2.5deg);
+    background:rgba(255,179,198,.72);
+  }
+
+  .row1{display:flex;justify-content:space-between;align-items:flex-start;gap:14px}
+  .meta{font-size:13px;color:#7a6d51;font-weight:600}
+  .intro{color:#3d3729;font-size:14px;margin:10px 0 0;white-space:pre-wrap}
+  .actions{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;align-items:center}
+
+  /* 队伍名前的彩色圆点 */
+  .dot{
+    display:inline-block;width:14px;height:14px;
+    border:2px solid var(--ink);border-radius:50%;
+    background:var(--accent, var(--ink));
+    margin-right:9px;vertical-align:-1px;
+  }
+
+  /* 人数标签 */
+  .slots{
+    font-size:13px;font-weight:900;
+    background:var(--mint);
+    border:2.5px solid var(--ink);
+    padding:4px 12px;
+    white-space:nowrap;border-radius:2px;
+    box-shadow:3px 3px 0 var(--ink);
+  }
+  .slots.full{background:var(--red);color:#fff}
+
+  /* ================= 贴纸 ================= */
+  .chips{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0;align-items:center}
+  .chip{
+    display:inline-block;padding:3px 11px;
+    font-size:12px;font-weight:800;
+    background:#fffbe8;
+    border:2px solid var(--ink);
+    border-radius:99px;
+    color:var(--ink);
+    box-shadow:2px 2px 0 var(--ink);
+  }
+  .chip.need{background:var(--yellow)}
+  .chip.gap {background:var(--mint)}
+  .chip.red {background:var(--red);color:#fff}
+  .chip.blue{background:var(--blue)}
+
+  /* ================= 按钮 ================= */
+  .btn{
+    display:inline-block;padding:8px 18px;
+    border:2.5px solid var(--ink);
+    background:var(--paper);
+    color:var(--ink);
+    font:inherit;font-size:14px;font-weight:800;
+    cursor:pointer;border-radius:2px;
+    box-shadow:3px 3px 0 var(--ink);
+    transition:transform .08s, box-shadow .08s, background .12s;
+    text-decoration:none;line-height:1.35;
+  }
+  .btn:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink);text-decoration:none}
+  .btn:active{transform:translate(3px,3px);box-shadow:0 0 0 var(--ink)}
+  .btn:disabled{opacity:.35;cursor:not-allowed;transform:none;box-shadow:3px 3px 0 var(--ink)}
+  .btn.primary{background:var(--ink);color:var(--paper)}
+  .btn.primary:hover{background:#333}
+  .btn.danger{background:var(--red);color:#fff}
+  .btn.mint{background:var(--mint)}
+  .btn.ghost{
+    box-shadow:none;border-color:transparent;background:transparent;
+    color:#6b5e42;padding:8px 12px;
+  }
+  .btn.ghost:hover{background:var(--ink);color:var(--paper);box-shadow:none;transform:none}
+  .btn.sm{padding:5px 13px;font-size:13px;box-shadow:2px 2px 0 var(--ink)}
+
+  /* ================= 表单 ================= */
+  input,select,textarea{
+    font:inherit;padding:9px 12px;
+    border:2.5px solid var(--ink);
+    border-radius:2px;
+    background:#fffef9;color:var(--ink);
+    width:100%;outline:none;font-family:inherit;
+    transition:box-shadow .12s, background .12s;
+  }
+  input:focus,select:focus,textarea:focus{
+    background:#fffbe6;
+    box-shadow:3px 3px 0 var(--yellow);
+  }
+  textarea{resize:vertical;min-height:76px}
+
+  label{
+    display:block;font-size:13px;font-weight:800;
+    color:#3d3729;margin-bottom:6px;
+  }
+  .form-row{margin-bottom:16px}
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:640px){.form-grid{grid-template-columns:1fr}}
+
+  .checks{display:flex;flex-wrap:wrap;gap:8px}
+  .checks label{
+    display:inline-flex;align-items:center;gap:6px;
+    background:#fffbe8;border:2px solid var(--ink);
+    padding:6px 14px;cursor:pointer;font-size:13px;font-weight:700;
+    margin:0;border-radius:99px;color:var(--ink);
+    box-shadow:2px 2px 0 var(--ink);
+    transition:all .14s;
+  }
+  .checks label:hover{background:var(--yellow);transform:translate(-1px,-1px);box-shadow:3px 3px 0 var(--ink)}
+  .checks input{width:auto;accent-color:var(--ink);box-shadow:none}
+  .checks label:has(input:checked){background:var(--mint)}
+
+  /* ================= 表格 ================= */
+  table{width:100%;border-collapse:collapse;font-size:14px;margin-top:6px}
+  th,td{text-align:left;padding:11px 10px;border-bottom:1.5px dashed #c9bfa8}
+  th{
+    font-weight:900;font-size:12px;letter-spacing:0.6px;
+    text-transform:uppercase;color:#3d3729;
+    border-bottom:2.5px solid var(--ink);
+    background:#fffbe8;
+  }
+  tbody tr:hover{background:#fffbe8}
+  tr:last-child td{border-bottom:none}
+
+  /* ================= 统计卡 ================= */
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:16px}
+  .stat{
+    border:2.5px solid var(--ink);
+    box-shadow:4px 4px 0 var(--ink);
+    padding:18px 20px;
+    position:relative;
+    transition:transform .15s;
+  }
+  .stat:hover{transform:translate(-2px,-2px)}
+  .stat .num{
+    font-size:40px;font-weight:900;line-height:1;
+    font-family:"SF Mono",ui-monospace,Menlo,Consolas,monospace;
+    letter-spacing:-2px;
+  }
+  .stat .lbl{
+    font-size:12px;color:#3d3729;font-weight:800;
+    margin-top:6px;letter-spacing:0.4px;
+  }
+  .stat::before{
+    content:'';position:absolute;top:10px;right:10px;
+    width:10px;height:10px;border-radius:50%;
+    background:var(--ink);opacity:.15;
+  }
+
+  /* ================= 提示 ================= */
+  .flash div{
+    background:var(--mint);
+    border:2.5px solid var(--ink);
+    color:var(--ink);padding:11px 16px;font-size:14px;font-weight:800;
+    box-shadow:4px 4px 0 var(--ink);margin-bottom:16px;
+    transform:rotate(-0.4deg);
+  }
+  .flash div.err{background:var(--red);color:#fff}
+
+  /* ================= 空状态 ================= */
+  .empty{
+    text-align:center;padding:52px 20px;
+    color:#857a5f;font-size:15px;font-weight:700;
+    border:2.5px dashed #c9bfa8;
+    background:rgba(253,250,241,.55);
+    margin-bottom:22px;
+  }
+  .empty-icon{font-size:44px;line-height:1;margin-bottom:12px;opacity:.7}
+
+  /* ================= 推荐理由 ================= */
+  .reason{
+    font-size:13px;font-weight:700;color:#0a5c3f;
+    background:#d8f5e6;
+    border-left:5px solid var(--mint);
+    padding:9px 14px;margin-top:12px;
+    border-radius:0 3px 3px 0;
+  }
+  .score{
+    float:right;font-size:11px;font-weight:900;
+    background:var(--ink);color:var(--yellow);
+    padding:4px 11px;border-radius:99px;
+    letter-spacing:0.4px;
+    box-shadow:2px 2px 0 rgba(26,26,26,.25);
+  }
+
+  hr{border:none;border-top:1.5px dashed #c9bfa8;margin:18px 0}
+
+  a{color:var(--ink);text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1.5px}
+  a:hover{background:var(--yellow);text-decoration:none}
+
+  /* ================= 页脚 ================= */
+  .foot{
+    text-align:center;padding:26px 20px 20px;
+    font-size:12px;color:#8a7d5e;font-weight:700;
+    border-top:3px solid var(--ink);
+    background:var(--paper);
+    margin-top:60px;
+  }
+  .foot .stripes{
+    height:6px;margin:-26px -0 22px;
+    background:repeating-linear-gradient(45deg,
+      var(--red) 0 10px, var(--yellow) 10px 20px,
+      var(--mint) 20px 30px, var(--blue) 30px 40px, var(--purple) 40px 50px);
+    border-bottom:3px solid var(--ink);
+  }
+
+  /* 卡片随机角度 */
+  .card:nth-child(4n+1){--rot:0.25deg}
+  .card:nth-child(5n)  {--rot:-0.35deg}
+  .card:nth-child(7n)  {--rot:0.5deg}
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+/* ============================================================
+ * 常量 & 小工具
+ * ============================================================ */
+const ROLES  = ['前端','后端','UI','算法','硬件','产品','运营','测试','数据'];
+const GRADES = ['大一','大二','大三','大四','研究生'];
+const HOURS  = ['每周 3-6 小时','每周 6-10 小时','每周 10 小时以上','仅周末'];
+const KEY    = 'hackmatch.db.v1';
+const SEP    = /[,，、/|;；\s]+/;
+
+/* 同义词表：把五花八门的写法归一，用于匹配打分 */
+const ALIAS = {
+  'ai':'ai','人工智能':'ai','机器学习':'ai','ml':'ai','大模型':'ai','llm':'ai','rag':'ai','深度学习':'ai',
+  '前端':'frontend','frontend':'frontend','web':'frontend','react':'frontend','vue':'frontend','小程序':'frontend',
+  '后端':'backend','backend':'backend','服务端':'backend','api':'backend',
+  'ui':'design','ux':'design','设计':'design','视觉':'design',
+  '算法':'algo','algo':'algo',
+  '数据':'data','数据分析':'data','数据可视化':'data',
+  '硬件':'hardware','嵌入式':'hardware','iot':'hardware','物联网':'hardware',
+  '产品':'product','pm':'product',
+  '运营':'ops','测试':'qa',
+  '校园工具':'campus','效率':'campus','教育':'edu','公益':'edu','社交':'social'
+};
+
+const ACCENTS = ['var(--red)','var(--yellow)','var(--mint)','var(--blue)','var(--purple)','var(--orange)'];
+const STAT_BG = ['#ffe3e3','#fff3bf','#d3f9d8','#d0ebff','#e5dbff'];
+
+const esc = s => String(s==null?'':s).replace(/[&<>"']/g, c =>
+  ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+function rawTokens(s){ return s ? s.split(SEP).map(x=>x.trim()).filter(Boolean) : []; }
+function normTokens(s){ return new Set(rawTokens(s).map(t => ALIAS[t.toLowerCase()] || t.toLowerCase())); }
+
+function maskContact(c){
+  if(!c) return '';
+  if(c.indexOf('@') > -1){
+    const p = c.split('@');
+    return (p[0].length > 2 ? p[0].slice(0,2) : p[0].slice(0,1)) + '***@' + p[1];
+  }
+  if(/^\d{7,}$/.test(c)) return c.slice(0,3) + '****' + c.slice(-2);
+  return c.length > 2 ? c.slice(0,2) + '***' : c;
+}
+
+function now(){
+  const d = new Date(), p = n => String(n).padStart(2,'0');
+  return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`;
+}
+
+/* ============================================================
+ * 本地数据
+ * ============================================================ */
+let db = null;
+let filter = { need:'', dir:'' };
+let flashes = [];
+
+function seed(){
+  const t = now();
+  const users = [
+    {id:1,name:'林小满',grade:'大二',skills:'前端,UI',direction:'校园工具,效率',hours:'每周 10 小时以上',contact:'xiaoman@example.com',createdAt:t},
+    {id:2,name:'陈锐',grade:'大三',skills:'后端,算法',direction:'AI 应用,大模型',hours:'每周 6-10 小时',contact:'13800138000',createdAt:t},
+    {id:3,name:'王雨桐',grade:'大二',skills:'UI,产品',direction:'教育,公益',hours:'每周 3-6 小时',contact:'yt_wang_wx',createdAt:t},
+    {id:4,name:'赵一鸣',grade:'大四',skills:'硬件,嵌入式',direction:'硬件,物联网',hours:'每周 10 小时以上',contact:'zhaoym@example.com',createdAt:t},
+    {id:5,name:'孙可',grade:'大一',skills:'前端,运营',direction:'校园工具,社交',hours:'每周 3-6 小时',contact:'sunke_wx',createdAt:t},
+    {id:6,name:'周墨',grade:'大三',skills:'算法,数据',direction:'AI 应用,数据可视化',hours:'每周 6-10 小时',contact:'zhoumo@example.com',createdAt:t}
+  ];
+  const teams = [
+    {id:1,name:'夜猫子',direction:'校园工具,效率',needRoles:['后端','算法'],capacity:4,
+     intro:'做个自动排课表 + 找自习室的小工具。前端和设计已经有人了，缺后端和算法。',leaderId:1,status:'recruiting',createdAt:t},
+    {id:2,name:'智谱小队',direction:'AI 应用,大模型',needRoles:['前端','UI'],capacity:4,
+     intro:'用大模型做校园问答助手。后端和算法在位，前端和设计还在喊人。',leaderId:2,status:'recruiting',createdAt:t},
+    {id:3,name:'硬件敢死队',direction:'硬件,物联网',needRoles:['后端','产品'],capacity:3,
+     intro:'宿舍智能能耗监测盒子，硬件部分搞定，缺一个写云端后端的。',leaderId:4,status:'recruiting',createdAt:t}
+  ];
+  const members = [
+    {id:1,teamId:1,userId:1,role:'队长',message:'',status:'approved',createdAt:t},
+    {id:2,teamId:2,userId:2,role:'队长',message:'',status:'approved',createdAt:t},
+    {id:3,teamId:3,userId:4,role:'队长',message:'',status:'approved',createdAt:t},
+    {id:4,teamId:1,userId:5,role:'前端',message:'做过两个小程序，想学点后端配合。',status:'pending',createdAt:t},
+    {id:5,teamId:2,userId:6,role:'算法',message:'可以一起搞 RAG。',status:'approved',createdAt:t}
+  ];
+  return {
+    users, teams, members, projects: [],
+    currentUserId: null,
+    seq: {users:7, teams:4, members:6, projects:1}
+  };
+}
+
+function load(){
+  try{
+    const raw = localStorage.getItem(KEY);
+    if(raw){ const d = JSON.parse(raw); if(d && d.users) return d; }
+  }catch(e){}
+  return seed();
+}
+function save(){ localStorage.setItem(KEY, JSON.stringify(db)); }
+
+/* ============================================================
+ * 匹配打分
+ * ============================================================ */
+function scoreTeam(user, team, joined){
+  const mine   = normTokens(user.skills);
+  const myDir  = normTokens(user.direction);
+  const need   = normTokens(team.needRoles.join(','));
+  const gap    = [...need].filter(x => mine.has(x));
+  const overlap= [...normTokens(team.direction)].filter(x => myDir.has(x));
+  const slots  = team.capacity - joined;
+
+  const score = 3*gap.length + 2*overlap.length + (slots>0?1:0);
+  const reasons = [];
+  if(gap.length)     reasons.push('你能补上缺口：' + gap.join('、'));
+  if(overlap.length) reasons.push('方向对得上：' + overlap.join('、'));
+  if(slots>0)        reasons.push('还差 ' + slots + ' 个人');
+  if(!reasons.length)reasons.push('没啥特别匹配的，当备选吧');
+  return {score, reasons};
+}
+
+function scorePartner(user, other){
+  const mine   = normTokens(user.skills);
+  const theirs = normTokens(other.skills);
+  const comp   = [...theirs].filter(x => !mine.has(x));
+  const common = [...theirs].filter(x => mine.has(x));
+  const inter  = [...normTokens(other.direction)].filter(x => normTokens(user.direction).has(x));
+
+  const score = 2*comp.length + 2*inter.length + 1*common.length;
+  const reasons = [];
+  if(comp.length)  reasons.push('会你不会的：' + comp.join('、'));
+  if(inter.length) reasons.push('方向对得上：' + inter.join('、'));
+  if(common.length)reasons.push('有共同技能，好沟通');
+  if(!reasons.length)reasons.push('可以聊聊看');
+  return {score, reasons};
+}
+
+/* ============================================================
+ * 快捷查询
+ * ============================================================ */
+function currentUser(){
+  if(!db.currentUserId) return null;
+  return db.users.find(u => u.id === db.currentUserId) || null;
+}
+function userName(id){
+  const u = db.users.find(x => x.id === id);
+  return u ? u.name : '未知';
+}
+function approvedCount(tid){
+  return db.members.filter(m => m.teamId === tid && m.status === 'approved').length;
+}
+function teamById(id){ return db.teams.find(t => t.id === id); }
+function flash(msg, cat){ flashes.push({msg, cat: cat || 'ok'}); }
+
+/* ============================================================
+ * 通用片段
+ * ============================================================ */
+function userBox(){
+  const me = currentUser();
+  if(!me) return '<span>还没报名</span><a class="btn sm primary" href="#/register">去报名</a>';
+  return `<span>👤 ${esc(me.name)}</span>
+  <select style="width:auto;padding:4px 8px;font-size:13px;box-shadow:none;border-width:2px"
+          onchange="switchUser(this.value)">
+    <option value="">换个身份</option>
+    ${db.users.map(u => `<option value="${u.id}" ${u.id===me.id?'selected':''}>${esc(u.name)}</option>`).join('')}
+  </select>`;
+}
+
+function statusChip(mine){
+  if(!mine) return '';
+  if(mine.status === 'approved') return '<span class="chip gap">已加入</span>';
+  if(mine.status === 'pending')  return '<span class="chip">审核中…</span>';
+  return '<span class="chip red">上次被拒</span>';
+}
+
+/* ============================================================
+ * 组队大厅
+ * ============================================================ */
+function viewLobby(){
+  const me = currentUser();
+  const teams = db.teams
+    .filter(t => t.status === 'recruiting')
+    .map(t => Object.assign({}, t, {joined: approvedCount(t.id)}))
+    .filter(t => {
+      if(filter.need && t.needRoles.indexOf(filter.need) === -1) return false;
+      if(filter.dir && (t.direction||'').toLowerCase().indexOf(filter.dir.toLowerCase()) === -1) return false;
+      return true;
+    });
+
+  const cards = teams.map((t, i) => {
+    const full = t.joined >= t.capacity;
+    const mine = me ? db.members.find(m => m.teamId === t.id && m.userId === me.id) : null;
+    return `
+    <div class="card" style="--accent:${ACCENTS[i % ACCENTS.length]}">
+      <div class="row1">
+        <div>
+          <h3><span class="dot"></span>${esc(t.name)}</h3>
+          <div class="meta">队长 ${esc(userName(t.leaderId))} · 方向 ${esc(t.direction || '没写')}</div>
+        </div>
+        <div class="slots ${full?'full':''}">${t.joined}/${t.capacity} ${full?'· 满了':''}</div>
+      </div>
+      <p class="intro">${esc(t.intro)}</p>
+      <div class="chips">
+        <span class="meta" style="font-size:12px">还缺</span>
+        ${t.needRoles.map(r => `<span class="chip need">${esc(r)}</span>`).join('') || '<span class="meta">没标</span>'}
+      </div>
+      <div class="actions">
+        <a class="btn sm" href="#/teams/${t.id}">瞅瞅</a>
+        ${statusChip(mine)}
+      </div>
+    </div>`;
+  }).join('');
+
+  return `
+  <div class="pagehead">
+    <h1>组队大厅</h1>
+    <a class="btn primary" href="#/teams/new">+ 拉个队</a>
+  </div>
+
+  <div class="card" style="--accent:var(--purple);--rot:-0.15deg">
+    <div style="display:flex;gap:16px;align-items:flex-end;flex-wrap:wrap">
+      <div style="flex:0 0 190px">
+        <label>缺谁</label>
+        <select onchange="filter.need=this.value;render()">
+          <option value="">不限</option>
+          ${ROLES.map(r => `<option value="${r}" ${filter.need===r?'selected':''}>${r}</option>`).join('')}
+        </select>
+      </div>
+      <div style="flex:1;min-width:190px">
+        <label>方向关键词</label>
+        <input value="${esc(filter.dir)}" placeholder="AI / 硬件 / 教育…"
+               onchange="filter.dir=this.value;render()">
+      </div>
+      <button class="btn primary" onclick="render()">筛一下</button>
+      <button class="btn ghost" onclick="filter={need:'',dir:''};render()">清空</button>
+    </div>
+  </div>
+
+  ${teams.length ? cards : `
+    <div class="empty">
+      <div class="empty-icon">🗂️</div>
+      没有符合条件的队伍，换个筛法试试？
+    </div>`}`;
+}
+
+/* ============================================================
+ * 报名
+ * ============================================================ */
+function viewRegister(){
+  return `
+  <h1 style="margin-bottom:24px">活动报名</h1>
+  <form class="card" onsubmit="submitRegister(event)" style="--accent:var(--mint);--rot:-0.15deg">
+    <div class="form-grid">
+      <div class="form-row">
+        <label>姓名 / 昵称 *</label>
+        <input name="uname" required placeholder="怎么称呼你">
+      </div>
+      <div class="form-row">
+        <label>年级</label>
+        <select name="grade">${GRADES.map(g => `<option>${g}</option>`).join('')}</select>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <label>技能标签（多选）</label>
+      <div class="checks">
+        ${ROLES.map(s => `<label><input type="checkbox" name="skills" value="${s}"> ${s}</label>`).join('')}
+      </div>
+    </div>
+
+    <div class="form-row">
+      <label>想做什么方向</label>
+      <input name="direction" placeholder="如 AI 应用 / 校园工具 / 硬件">
+    </div>
+
+    <div class="form-grid">
+      <div class="form-row">
+        <label>能投多少时间</label>
+        <select name="hours">${HOURS.map(h => `<option>${h}</option>`).join('')}</select>
+      </div>
+      <div class="form-row">
+        <label>联系方式（展示时打码）</label>
+        <input name="contact" placeholder="微信 / 邮箱 / 手机">
+      </div>
+    </div>
+
+    <button class="btn primary" type="submit">提交报名</button>
+  </form>`;
+}
+
+/* ============================================================
+ * 创建队伍
+ * ============================================================ */
+function viewTeamNew(){
+  if(!currentUser()){
+    return `<div class="empty">
+      <div class="empty-icon">✋</div>
+      先报名，再来拉队伍吧<br><br>
+      <a class="btn primary" href="#/register">去报名</a>
+    </div>`;
+  }
+  return `
+  <h1 style="margin-bottom:24px">拉个队伍</h1>
+  <form class="card" onsubmit="submitTeam(event)" style="--accent:var(--orange);--rot:-0.15deg">
+    <div class="form-grid">
+      <div class="form-row">
+        <label>队伍名 *</label>
+        <input name="tname" required placeholder="随便起个响亮点的">
+      </div>
+      <div class="form-row">
+        <label>人数上限（含队长，最少 2）</label>
+        <input name="capacity" type="number" min="2" max="10" value="4">
+      </div>
+    </div>
+
+    <div class="form-row">
+      <label>项目方向</label>
+      <input name="direction" placeholder="如 AI 应用,大模型">
+    </div>
+
+    <div class="form-row">
+      <label>还缺哪些角色（会出现在大厅筛选里）</label>
+      <div class="checks">
+        ${ROLES.map(r => `<label><input type="checkbox" name="needRoles" value="${r}"> ${r}</label>`).join('')}
+      </div>
+    </div>
+
+    <div class="form-row">
+      <label>简介</label>
+      <textarea name="intro" rows="3" placeholder="想做什么、现在什么进度、想找什么样的人"></textarea>
+    </div>
+
+    <button class="btn primary" type="submit">建队</button>
+  </form>`;
+}
+
+/* ============================================================
+ * 队伍详情
+ * ============================================================ */
+function viewTeamDetail(id){
+  const t = teamById(id);
+  if(!t) return '<div class="empty"><div class="empty-icon">🕳️</div>这个队伍不见了</div>';
+
+  const me = currentUser();
+  const rows      = db.members.filter(m => m.teamId === t.id);
+  const approved  = rows.filter(m => m.status === 'approved');
+  const pending   = rows.filter(m => m.status === 'pending');
+  const rejected  = rows.filter(m => m.status === 'rejected');
+  const isLeader  = me && me.id === t.leaderId;
+  const full      = approved.length >= t.capacity;
+  const mine      = me ? rows.find(m => m.userId === me.id) : null;
+  const project   = db.projects.find(p => p.teamId === t.id);
+
+  const memberRows = approved.map(m => {
+    const u = db.users.find(x => x.id === m.userId) || {};
+    return `<tr>
+      <td>${esc(u.name)}${m.userId === t.leaderId ? ' 👑' : ''}</td>
+      <td>${esc(u.grade || '')}</td>
+      <td>${esc(u.skills || '')}</td>
+      <td>${esc(u.direction || '')}</td>
+      <td>${esc(maskContact(u.contact))}</td>
+    </tr>`;
+  }).join('');
+
+  let reviewBlock = '';
+  if(isLeader){
+    const items = pending.map(m => {
+      const u = db.users.find(x => x.id === m.userId) || {};
+      return `<div style="padding:14px 0;border-bottom:1.5px dashed #c9bfa8">
+        <div style="font-size:15px;font-weight:800">${esc(u.name)}
+          <span class="meta"> ${esc(u.grade||'')} · 想当 ${esc(m.role||'不限')}</span></div>
+        <div class="meta">技能：${esc(u.skills||'')} · 方向：${esc(u.direction||'')} · 时间：${esc(u.hours||'')}</div>
+        ${m.message ? `<div class="meta" style="margin-top:5px">留言：「${esc(m.message)}」</div>` : ''}
+        <div class="actions">
+          <button class="btn primary sm" ${full?'disabled':''} onclick="reviewApply(${m.id},'approve')">通过</button>
+          <button class="btn danger sm" onclick="reviewApply(${m.id},'reject')">拒了</button>
+        </div>
+      </div>`;
+    }).join('');
+    reviewBlock = `
+    <div class="card" style="--accent:var(--red)">
+      <h3>等审核的申请（${pending.length}）</h3>
+      ${pending.length ? items : '<div class="meta">还没人申请，等等吧</div>'}
+      ${rejected.length ? `<hr><div class="meta">已拒绝：${rejected.map(m => esc(userName(m.userId))).join('、')}</div>` : ''}
+    </div>`;
+  }
+
+  let applyBlock;
+  if(mine && mine.status === 'approved'){
+    applyBlock = '<span class="chip gap" style="font-size:13px;padding:6px 14px">你已经在这个队里了</span>';
+  }else if(mine && mine.status === 'pending'){
+    applyBlock = '<span class="chip" style="font-size:13px;padding:6px 14px">申请交上去了，等队长</span>';
+  }else if(full){
+    applyBlock = '<span class="chip red" style="font-size:13px;padding:6px 14px">人满了，下次早点</span>';
+  }else{
+    applyBlock = `
+    <h3>想加入</h3>
+    <form data-tid="${t.id}" onsubmit="submitApply(event)" style="margin-top:10px">
+      <div class="form-grid">
+        <div class="form-row">
+          <label>你想干啥</label>
+          <input name="applyRole" placeholder="前端 / UI / 产品…">
+        </div>
+        <div class="form-row">
+          <label>带句话（可选）</label>
+          <input name="applyMsg" placeholder="一句话让人记住你">
+        </div>
+      </div>
+      <button class="btn primary" type="submit">发申请</button>
+    </form>`;
+  }
+
+  let projectBlock = '';
+  if(isLeader){
+    if(project){
+      projectBlock = `
+      <div class="card" style="--accent:var(--purple)">
+        <h3>项目已提交</h3>
+        <div class="meta">${esc(project.createdAt)}</div>
+        <p class="intro"><b>${esc(project.name)}</b><br>${esc(project.intro)}</p>
+        <div class="meta" style="margin-top:8px">仓库：${esc(project.repo||'—')} · Demo：${esc(project.demo||'—')}</div>
+      </div>`;
+    }else{
+      const defaultMembers = approved.map(m => userName(m.userId)).join(',');
+      projectBlock = `
+      <div class="card" style="--accent:var(--blue)">
+        <h3>交作品</h3>
+        <form data-tid="${t.id}" onsubmit="submitProject(event)" style="margin-top:10px">
+          <div class="form-row"><label>项目名 *</label><input name="pname" required></div>
+          <div class="form-row"><label>简介</label><textarea name="pintro" rows="3"></textarea></div>
+          <div class="form-grid">
+            <div class="form-row"><label>GitHub 仓库</label><input name="prepo" placeholder="https://github.com/..."></div>
+            <div class="form-row"><label>Demo 链接</label><input name="pdemo" placeholder="https://..."></div>
+          </div>
+          <div class="form-row">
+            <label>成员名单（逗号分隔，默认是当前队里人）</label>
+            <input name="pmembers" value="${esc(defaultMembers)}">
+          </div>
+          <button class="btn primary" type="submit">提交</button>
+        </form>
+      </div>`;
+    }
+  }
+
+  return `
+  <div class="pagehead">
+    <h1>${esc(t.name)}</h1>
+    <a class="btn ghost" href="#/">← 回大厅</a>
+  </div>
+
+  <div class="card" style="--accent:var(--yellow)">
+    <div class="row1">
+      <div>
+        <div class="meta">队长 ${esc(userName(t.leaderId))} · 方向 ${esc(t.direction || '没写')}</div>
+        <p class="intro">${esc(t.intro)}</p>
+        <div class="chips">
+          <span class="meta" style="font-size:12px">还缺</span>
+          ${t.needRoles.map(r => `<span class="chip need">${esc(r)}</span>`).join('') || '<span class="meta">没标</span>'}
+        </div>
+      </div>
+      <div class="slots ${full?'full':''}">${approved.length}/${t.capacity}</div>
+    </div>
+  </div>
+
+  <div class="card" style="--accent:var(--mint)">
+    <h3>队里都有谁（${approved.length}/${t.capacity}）</h3>
+    <table>
+      <tr><th>昵称</th><th>年级</th><th>技能</th><th>方向</th><th>联系方式</th></tr>
+      ${memberRows}
+    </table>
+  </div>
+
+  ${reviewBlock}
+  <div class="card" style="--accent:var(--blue)">${applyBlock}</div>
+  ${projectBlock}`;
+}
+
+/* ============================================================
+ * 作品墙
+ * ============================================================ */
+function viewProjects(){
+  if(!db.projects.length){
+    return `<div class="pagehead"><h1>作品墙</h1></div>
+            <div class="empty">
+              <div class="empty-icon">📭</div>
+              还没人交作品，都在摸鱼？
+            </div>`;
+  }
+  const cards = db.projects.map((p, i) => {
+    const t = teamById(p.teamId) || {};
+    const mem = rawTokens(p.members).map(m => `<span class="chip">${esc(m)}</span>`).join('');
+    return `
+    <div class="card" style="--accent:${ACCENTS[i % ACCENTS.length]}">
+      <h3><span class="dot"></span>${esc(p.name)}</h3>
+      <div class="meta">${esc(t.name||'')} · ${esc(t.direction||'')} · 队长 ${esc(userName(t.leaderId))} · ${esc(p.createdAt)}</div>
+      <p class="intro">${esc(p.intro)}</p>
+      <div class="chips">${mem}</div>
+      <div class="actions">
+        ${p.repo ? `<a class="btn sm" href="${esc(p.repo)}" target="_blank" rel="noopener">源码</a>` : ''}
+        ${p.demo ? `<a class="btn sm primary" href="${esc(p.demo)}" target="_blank" rel="noopener">看 Demo</a>` : ''}
+        <a class="btn sm ghost" href="#/teams/${p.teamId}">队伍</a>
+      </div>
+    </div>`;
+  }).join('');
+
+  return `<div class="pagehead">
+    <h1>作品墙（${db.projects.length}）</h1>
+    <a class="btn ghost" href="#/">回大厅</a>
+  </div>${cards}`;
+}
+
+/* ============================================================
+ * 推荐
+ * ============================================================ */
+function viewRecommend(){
+  const me = currentUser();
+  if(!me){
+    return `<div class="empty">
+      <div class="empty-icon">🎯</div>
+      先报名，才有得推<br><br>
+      <a class="btn primary" href="#/register">去报名</a>
+    </div>`;
+  }
+
+  const teamRecs = [];
+  db.teams.filter(t => t.status === 'recruiting').forEach(t => {
+    const joined = approvedCount(t.id);
+    if(joined >= t.capacity) return;
+    const mine = db.members.find(m => m.teamId === t.id && m.userId === me.id);
+    if(mine && (mine.status === 'pending' || mine.status === 'approved')) return;
+    const r = scoreTeam(me, t, joined);
+    teamRecs.push({team:t, joined, score:r.score, reasons:r.reasons});
+  });
+  teamRecs.sort((a,b) => b.score - a.score);
+
+  const partnerRecs = db.users
+    .filter(u => u.id !== me.id)
+    .map(u => { const r = scorePartner(me, u); return {user:u, score:r.score, reasons:r.reasons}; })
+    .sort((a,b) => b.score - a.score);
+
+  const teamHtml = teamRecs.slice(0,3).map((r, i) => `
+    <div class="card" style="--accent:${ACCENTS[i % ACCENTS.length]}">
+      <span class="score">匹配度 ${r.score}</span>
+      <h3><span class="dot"></span>${esc(r.team.name)}</h3>
+      <div class="meta">队长 ${esc(userName(r.team.leaderId))} · 方向 ${esc(r.team.direction)} · ${r.joined}/${r.team.capacity} 人</div>
+      <p class="intro">${esc(r.team.intro)}</p>
+      <div class="chips"><span class="meta" style="font-size:12px">还缺</span>
+        ${r.team.needRoles.map(n => `<span class="chip need">${esc(n)}</span>`).join('')}
+      </div>
+      <div class="reason">为啥推给你：${esc(r.reasons.join('；'))}</div>
+      <div class="actions"><a class="btn sm primary" href="#/teams/${r.team.id}">去看看</a></div>
+    </div>`).join('');
+
+  const partnerHtml = partnerRecs.slice(0,3).map((r, i) => `
+    <div class="card" style="--accent:${ACCENTS[(i+2) % ACCENTS.length]}">
+      <span class="score">匹配度 ${r.score}</span>
+      <h3><span class="dot"></span>${esc(r.user.name)}
+        <span class="meta" style="font-weight:600"> ${esc(r.user.grade)}</span></h3>
+      <div class="meta">技能：${esc(r.user.skills)} · 方向：${esc(r.user.direction)} · 时间：${esc(r.user.hours)}</div>
+      <div class="reason">为啥推给你：${esc(r.reasons.join('；'))}</div>
+    </div>`).join('');
+
+  return `
+  <div class="pagehead">
+    <h1>推给你的</h1>
+    <div class="sub">技能「${esc(me.skills||'空')}」 · 方向「${esc(me.direction||'空')}」</div>
+  </div>
+
+  <h3 style="margin:24px 0 16px;font-size:16px;letter-spacing:0.5px">🎯 队伍 TOP 3</h3>
+  ${teamRecs.length ? teamHtml : '<div class="empty"><div class="empty-icon">🤷</div>暂时没有合适的队伍</div>'}
+
+  <h3 style="margin:32px 0 16px;font-size:16px;letter-spacing:0.5px">🤝 队友 TOP 3</h3>
+  ${partnerRecs.length ? partnerHtml : '<div class="empty"><div class="empty-icon">👻</div>就你一个？那也没辙</div>'}`;
+}
+
+/* ============================================================
+ * 后台
+ * ============================================================ */
+function viewAdmin(){
+  const nUsers    = db.users.length;
+  const nTeams    = db.teams.length;
+  const nProjects = db.projects.length;
+  const nPending  = db.members.filter(m => m.status === 'pending').length;
+  const nApproved = db.members.filter(m => m.status === 'approved').length;
+
+  const skillMap = {};
+  db.users.forEach(u => rawTokens(u.skills).forEach(s => skillMap[s] = (skillMap[s]||0)+1));
+  const skillHtml = Object.keys(skillMap)
+    .sort((a,b) => skillMap[b]-skillMap[a])
+    .map(s => `<span class="chip">${esc(s)} × ${skillMap[s]}</span>`).join('') ||
+    '<span class="meta">暂无数据</span>';
+
+  const teamRows = db.teams.map(t => {
+    const joined  = approvedCount(t.id);
+    const pending = db.members.filter(m => m.teamId === t.id && m.status === 'pending').length;
+    const hasProj = db.projects.some(p => p.teamId === t.id);
+    return `<tr>
+      <td><b>${t.id}</b></td>
+      <td><a href="#/teams/${t.id}">${esc(t.name)}</a></td>
+      <td>${esc(userName(t.leaderId))}</td>
+      <td>${esc(t.direction || '')}</td>
+      <td>${joined}/${t.capacity}</td>
+      <td>${pending}</td>
+      <td>${hasProj ? '✅' : '—'}</td>
+    </tr>`;
+  }).join('');
+
+  const statItems = [
+    [nUsers, '报名'],
+    [nTeams, '队伍'],
+    [nProjects, '交作品'],
+    [nPending, '待审核'],
+    [nApproved, '已组队人次']
+  ];
+
+  return `
+  <div class="pagehead">
+    <h1>后台瞄一眼</h1>
+    <div class="sub">活动进行中的实时数据</div>
+  </div>
+
+  <div class="grid" style="margin-bottom:24px">
+    ${statItems.map(([v,l], i) => `
+      <div class="stat" style="background:${STAT_BG[i]}">
+        <div class="num">${v}</div>
+        <div class="lbl">${l}</div>
+      </div>`).join('')}
+  </div>
+
+  <div class="card" style="--accent:var(--purple)">
+    <h3>技能分布</h3>
+    <div class="chips">${skillHtml}</div>
+  </div>
+
+  <div class="card" style="--accent:var(--blue)">
+    <h3>队伍明细</h3>
+    <table>
+      <tr><th>#</th><th>队名</th><th>队长</th><th>方向</th><th>人数</th><th>待审</th><th>作品</th></tr>
+      ${teamRows}
+    </table>
+  </div>`;
+}
+
+/* ============================================================
+ * 交互动作
+ * ============================================================ */
+function switchUser(v){
+  if(!v) return;
+  db.currentUserId = +v;
+  save(); flash('换了个身份'); render();
+}
+
+function submitRegister(e){
+  e.preventDefault();
+  const f = e.target;
+  const name = f.elements['uname'].value.trim();
+  if(!name){ flash('名字不能空', 'err'); render(); return; }
+
+  const skills = [].slice.call(f.querySelectorAll('input[name=skills]:checked')).map(i => i.value);
+  const u = {
+    id: db.seq.users++,
+    name,
+    grade: f.elements['grade'].value,
+    skills: skills.join(','),
+    direction: f.elements['direction'].value.trim(),
+    hours: f.elements['hours'].value,
+    contact: f.elements['contact'].value.trim(),
+    createdAt: now()
+  };
+  db.users.push(u);
+  db.currentUserId = u.id;
+  save();
+  flash('报好了，欢迎 ' + name);
+  location.hash = '#/';
+  render();
+}
+
+function submitTeam(e){
+  e.preventDefault();
+  const me = currentUser();
+  if(!me){ flash('先报名', 'err'); location.hash = '#/register'; render(); return; }
+  const f = e.target;
+  const name = f.elements['tname'].value.trim();
+  if(!name){ flash('队名空着呢', 'err'); render(); return; }
+
+  let cap = parseInt(f.elements['capacity'].value, 10);
+  if(!cap || cap < 2) cap = 2;
+  if(cap > 10) cap = 10;
+
+  const needRoles = [].slice.call(f.querySelectorAll('input[name=needRoles]:checked')).map(i => i.value);
+  const t = {
+    id: db.seq.teams++,
+    name,
+    direction: f.elements['direction'].value.trim(),
+    needRoles,
+    capacity: cap,
+    intro: f.elements['intro'].value.trim(),
+    leaderId: me.id,
+    status: 'recruiting',
+    createdAt: now()
+  };
+  db.teams.push(t);
+  db.members.push({
+    id: db.seq.members++, teamId: t.id, userId: me.id,
+    role: '队长', message: '', status: 'approved', createdAt: now()
+  });
+  save();
+  flash('队伍建好了');
+  location.hash = '#/teams/' + t.id;
+  render();
+}
+
+function submitApply(e){
+  e.preventDefault();
+  const f = e.target;
+  const tid = +f.dataset.tid;
+  const t = teamById(tid);
+  const me = currentUser();
+  if(!me){ flash('先报名', 'err'); location.hash = '#/register'; render(); return; }
+  if(!t) return;
+  if(approvedCount(tid) >= t.capacity){ flash('人满了', 'err'); render(); return; }
+
+  const role = f.elements['applyRole'].value.trim();
+  const message = f.elements['applyMsg'].value.trim();
+  const mine = db.members.find(m => m.teamId === tid && m.userId === me.id);
+
+  if(mine){
+    if(mine.status === 'rejected'){
+      mine.status = 'pending';
+      mine.role = role;
+      mine.message = message;
+      mine.createdAt = now();
+      save(); flash('又交了一次，等队长');
+    }else{
+      flash('你已经申请过啦', 'err');
+    }
+    render(); return;
+  }
+
+  db.members.push({
+    id: db.seq.members++, teamId: tid, userId: me.id,
+    role, message, status: 'pending', createdAt: now()
+  });
+  save(); flash('申请发出去了'); render();
+}
+
+function reviewApply(mid, act){
+  const m = db.members.find(x => x.id === mid);
+  if(!m) return;
+  const t = teamById(m.teamId);
+  if(!t) return;
+  const me = currentUser();
+  if(!me || me.id !== t.leaderId){ flash('只有队长能操作', 'err'); render(); return; }
+
+  if(act === 'approve'){
+    if(approvedCount(t.id) >= t.capacity){ flash('满了，加不进来', 'err'); render(); return; }
+    m.status = 'approved';
+    flash('放进来了');
+  }else{
+    m.status = 'rejected';
+    flash('拒了');
+  }
+  save(); render();
+}
+
+function submitProject(e){
+  e.preventDefault();
+  const f = e.target;
+  const tid = +f.dataset.tid;
+  const t = teamById(tid);
+  const me = currentUser();
+  if(!t || !me || me.id !== t.leaderId){ flash('只有队长能交', 'err'); render(); return; }
+  if(db.projects.some(p => p.teamId === tid)){ flash('已经交过一次了', 'err'); render(); return; }
+
+  const name = f.elements['pname'].value.trim();
+  if(!name){ flash('项目名得填', 'err'); render(); return; }
+
+  db.projects.push({
+    id: db.seq.projects++,
+    teamId: tid,
+    name,
+    intro: f.elements['pintro'].value.trim(),
+    repo: f.elements['prepo'].value.trim(),
+    demo: f.elements['pdemo'].value.trim(),
+    members: rawTokens(f.elements['pmembers'].value).join(','),
+    createdAt: now()
+  });
+  save();
+  flash('作品交上去了');
+  location.hash = '#/projects';
+  render();
+}
+
+/* ============================================================
+ * 布局 & 路由
+ * ============================================================ */
+function layout(content){
+  const flashHtml = flashes.length
+    ? `<div class="flash">${flashes.map(f =>
+        `<div class="${f.cat==='err'?'err':''}">${esc(f.msg)}</div>`).join('')}</div>`
+    : '';
+  flashes = [];
+
+  return `
+  <header class="nav">
+    <a class="brand" href="#/">HackMatch</a>
+    <nav>
+      <a href="#/">组队大厅</a>
+      <a href="#/teams/new">拉队伍</a>
+      <a href="#/projects">作品墙</a>
+      <a href="#/recommend">推给我</a>
+      <a href="#/admin">后台</a>
+    </nav>
+    <div class="me">${userBox()}</div>
+  </header>
+  <main>${flashHtml}${content}</main>
+  <footer class="foot">
+    <div class="stripes"></div>
+    ⚡ HackMatch · 社团黑客松组队平台 · 数据只存本地浏览器
+  </footer>`;
+}
+
+function render(){
+  const hash = location.hash.slice(1) || '/';
+  let content;
+  if(hash === '/')                     content = viewLobby();
+  else if(hash === '/register')        content = viewRegister();
+  else if(hash === '/teams/new')       content = viewTeamNew();
+  else if(hash === '/projects')        content = viewProjects();
+  else if(hash === '/recommend')       content = viewRecommend();
+  else if(hash === '/admin')           content = viewAdmin();
+  else if(/^\/teams\/\d+$/.test(hash)) content = viewTeamDetail(+hash.split('/')[2]);
+  else                                 content = '<div class="empty"><div class="empty-icon">❓</div>这个页面不存在</div>';
+
+  document.getElementById('app').innerHTML = layout(content);
+}
+
+/* ============================================================
+ * 启动
+ * ============================================================ */
+db = load();
+save();
+if(!location.hash) location.hash = '#/';
+window.addEventListener('hashchange', render);
+render();
+</script>
+</body>
+</html>
